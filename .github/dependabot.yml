@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # Python deps in pyproject.toml and uv.lock
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    groups:
+      aws-cdk:
+        patterns: ["aws-cdk-lib", "constructs"]
+      dev-tools:
+        patterns: ["pytest*", "ruff", "mypy", "moto*", "boto3-stubs*", "import-linter", "pip-audit"]
+  # Pinned CDK CLI
+  - package-ecosystem: "npm"
+    directory: "/infra"
+    schedule: { interval: "weekly" }
+  # GitHub Actions pinned to SHAs
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "weekly" }

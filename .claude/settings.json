@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(uv run pytest *)",
+      "Bash(uv run ruff check *)",
+      "Bash(uv run ruff format *)",
+      "Bash(uv run mypy *)",
+      "Bash(uv run lint-imports *)",
+      "Bash(uv run python tools/check_text.py *)",
+      "Bash(uv sync *)",
+      "Bash(npx cdk synth *)",
+      "Bash(npx cdk diff *)",
+      "Bash(npx cdk ls *)",
+      "Bash(cmake --build *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git switch *)",
+      "Bash(git checkout *)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr diff *)",
+      "WebFetch(domain:www.o3de.org)",
+      "WebFetch(domain:docs.aws.amazon.com)",
+      "WebFetch(domain:docs.getmoto.org)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(npx cdk destroy *)",
+      "Bash(cdk destroy *)",
+      "Bash(printenv *)",
+      "Bash(env)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(gh pr create *)",
+      "Bash(gh issue create *)",
+      "Bash(gh issue edit *)",
+      "Bash(npx cdk deploy *)",
+      "Bash(cdk deploy *)",
+      "Bash(npx cdk bootstrap *)",
+      "Bash(aws *)",
+      "Bash(uv add *)",
+      "Bash(pip install *)",
+      "Bash(npm install *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "WebFetch"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_bash.py\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_edit.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

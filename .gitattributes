@@ -1,0 +1,13 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.sln text eol=crlf
+
+# Binary game assets (move to Git LFS when they appear)
+*.png binary
+*.jpg binary
+*.tga binary
+*.dds binary
+*.fbx binary
+*.wav binary
+*.ogg binary

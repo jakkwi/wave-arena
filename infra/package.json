@@ -1,0 +1,11 @@
+{
+  "name": "wave-arena-infra",
+  "private": true,
+  "description": "Pinned AWS CDK CLI for the Wave Arena CDK app",
+  "scripts": {
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "aws-cdk": "2.1146.1"
+  }
+}

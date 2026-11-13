@@ -1,0 +1,18 @@
+# Close to the O3DE engine style.
+BasedOnStyle: Microsoft
+Language: Cpp
+Standard: c++20
+ColumnLimit: 140
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+BreakBeforeBraces: Allman
+NamespaceIndentation: All
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+SortIncludes: true
+IncludeBlocks: Preserve
+FixNamespaceComments: true
+SpaceAfterTemplateKeyword: false

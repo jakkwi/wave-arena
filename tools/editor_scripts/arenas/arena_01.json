@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "name": "arena_01",
+  "size": [40, 40],
+  "player_start": [0, 0],
+  "walls": [
+    { "from": [-20, -20], "to": [20, -20], "height": 3 },
+    { "from": [20, -20], "to": [20, 20], "height": 3 },
+    { "from": [20, 20], "to": [-20, 20], "height": 3 },
+    { "from": [-20, 20], "to": [-20, -20], "height": 3 }
+  ],
+  "obstacles": [
+    { "prefab": "Pillar", "position": [-8, -8], "rotation_deg": 0 },
+    { "prefab": "Pillar", "position": [8, -8], "rotation_deg": 0 },
+    { "prefab": "Pillar", "position": [-8, 8], "rotation_deg": 0 },
+    { "prefab": "Pillar", "position": [8, 8], "rotation_deg": 0 },
+    { "prefab": "Crate", "position": [0, 12], "rotation_deg": 45 }
+  ],
+  "spawners": [
+    { "id": "north", "position": [0, 18] },
+    { "id": "south", "position": [0, -18] },
+    { "id": "east", "position": [18, 0] },
+    { "id": "west", "position": [-18, 0] }
+  ]
+}

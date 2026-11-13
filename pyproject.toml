@@ -1,0 +1,85 @@
+[project]
+name = "wave-arena"
+version = "0.0.1"
+description = "Wave Arena: Python parts (Lambda backend, CDK infra, O3DE editor tools, analytics)"
+requires-python = ">=3.12"
+# Runtime deps of the Lambda backend. boto3 is also in the Lambda runtime, pinned here for tests.
+dependencies = ["boto3>=1.35"]
+
+[project.optional-dependencies]
+# CDK app in infra/.
+infra = ["aws-cdk-lib>=2.170", "constructs>=10.4"]
+# Heatmaps and reports in analytics/ (M6).
+analytics = ["matplotlib>=3.9"]
+dev = [
+    "pytest>=8",
+    "moto[dynamodb,s3]>=5",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "boto3-stubs[dynamodb,s3]>=1.35",
+    "import-linter>=2.1",
+    "pip-audit>=2.7",
+]
+
+[tool.uv]
+# Not an installable package: modules are imported from the repo root.
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["game", "infra/cdk.out", "infra/node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "RUF", "SIM", "PTH"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "S603", "S105", "S106"]
+"tests/**" = ["S101", "S603"]
+# Dev tooling calls git with fixed argument lists.
+"tools/check_text.py" = ["S603", "S607"]
+".claude/hooks/**" = ["S603", "S607"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["backend", "infra", "tools", "analytics", "tests", ".claude/hooks"]
+exclude = ["infra/cdk\\.out/", "infra/node_modules/"]
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+# O3DE Editor Python bindings exist only inside the Editor.
+module = ["azlmbr", "azlmbr.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "tools/tests", "tests"]
+pythonpath = ["."]
+addopts = "-q --import-mode=importlib"
+
+[tool.importlinter]
+root_packages = ["backend"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Domain is pure: no AWS libraries, no adapters, no handlers"
+type = "forbidden"
+source_modules = ["backend.domain"]
+forbidden_modules = [
+    "backend.adapters",
+    "backend.lambdas",
+    "boto3",
+    "botocore",
+    "aws_lambda_powertools",
+]
+
+[[tool.importlinter.contracts]]
+name = "Adapters depend only on domain"
+type = "forbidden"
+source_modules = ["backend.adapters"]
+forbidden_modules = ["backend.lambdas"]
+
+[[tool.importlinter.contracts]]
+name = "Layers: lambdas -> adapters -> domain"
+type = "layers"
+layers = ["backend.lambdas", "backend.adapters", "backend.domain"]

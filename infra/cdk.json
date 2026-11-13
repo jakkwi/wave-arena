@@ -1,0 +1,13 @@
+{
+  "app": "uv run --no-sync python app.py",
+  "watch": {
+    "include": ["**/*.py"],
+    "exclude": ["cdk.out", "node_modules", "tests", "**/__pycache__"]
+  },
+  "context": {
+    "@aws-cdk/aws-iam:minimizePolicies": true,
+    "@aws-cdk/core:checkSecretUsage": true,
+    "@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy": true,
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true
+  }
+}
