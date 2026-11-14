@@ -93,6 +93,30 @@ Every error has the same shape and never includes stack traces or internal detai
 | 429 | (API Gateway) | Throttled by the stage limits |
 | 500 | `internal_error` | Anything unexpected. Details only in the logs |
 
+## Raw run event (S3)
+
+Not part of the HTTP API: the record `POST /runs` archives for analytics (M6). Built by `backend/domain/events.py`.
+
+- Key: `runs/YYYY/MM/DD/<run_id>.json`, date in UTC. Only `[A-Za-z0-9-]` is allowed in `run_id` before it goes into a key.
+- Content type `application/json`, compact JSON, UTF-8.
+
+```json
+{
+  "v": 1,
+  "run_id": "5f0c7d0e-2b1a-4c47-9a3e-1d2b8f6a9c10",
+  "received_at": "2026-11-14T18:03:12.005000Z",
+  "player_name": "Kuba",
+  "arena": "arena_01",
+  "score": 4200,
+  "waves_survived": 7,
+  "duration_s": 312.5,
+  "death_position": { "x": -3.5, "y": 12.0 },
+  "killer_type": "grunt"
+}
+```
+
+`received_at` always has microseconds and a `Z`, so string order equals time order. `killer_type` is `null` when the run did not end by death.
+
 ## Order of writes in POST /runs
 
 1. Validate the body.
