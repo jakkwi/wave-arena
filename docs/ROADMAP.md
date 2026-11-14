@@ -124,7 +124,7 @@ Plan a separate evening: the first engine build takes a long time and needs a lo
 **Goal.** A deployed backend: `POST /runs` stores a run, `GET /leaderboard` returns the top 10. Built test-first.
 
 **Acceptance criteria**
-- [ ] Domain first: `Run`, `LeaderboardEntry`, validation rules, ports (`RunRepository`, `EventArchive`), with pytest, zero AWS imports
+- [x] Domain first: `Run`, `LeaderboardEntry`, validation rules, ports (`RunRepository`, `EventArchive`), with pytest, zero AWS imports
 - [ ] DynamoDB adapter and S3 adapter tested with moto
 - [ ] Lambda handlers are thin: parse, call domain, map errors to HTTP codes
 - [ ] CDK stack: HTTP API, two Lambda functions, one DynamoDB table (on-demand), one S3 bucket (blocked public access, encryption, lifecycle rule)
