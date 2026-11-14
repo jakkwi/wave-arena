@@ -8,7 +8,7 @@ Seven milestones. Each one ends in something that runs and is merged to main. Do
 | M1 | Movement, top-down camera, chasing enemy | C++, EBus | Not started |
 | M2 | Waves, HP, death, score screen | C++, LyShine | Not started |
 | M3 | Editor script builds the arena from JSON | Python, O3DE Editor | Not started |
-| M4 | CDK stack: API, Lambda, DynamoDB, S3, budget | Python, AWS | Not started |
+| M4 | CDK stack: API, Lambda, DynamoDB, S3, budget | Python, AWS | In progress |
 | M5 | Game posts run results and shows top 10 | C++, HTTP, AWS | Not started |
 | M6 | Death heatmap and wave rebalancing | Python, game design | Not started |
 
