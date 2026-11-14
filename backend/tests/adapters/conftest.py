@@ -9,9 +9,11 @@ from moto import mock_aws
 
 if TYPE_CHECKING:
     from mypy_boto3_dynamodb.service_resource import Table
+    from mypy_boto3_s3.client import S3Client
 
 REGION = "eu-central-1"
 TABLE_NAME = "wave-arena-test-runs"
+BUCKET_NAME = "wave-arena-test-events"
 
 
 @pytest.fixture(autouse=True)
@@ -41,3 +43,15 @@ def runs_table() -> Iterator["Table"]:
             BillingMode="PAY_PER_REQUEST",
         )
         yield table
+
+
+@pytest.fixture
+def events_bucket() -> Iterator["S3Client"]:
+    """An S3 client with the raw events bucket created."""
+    with mock_aws():
+        s3 = boto3.client("s3", region_name=REGION)
+        s3.create_bucket(
+            Bucket=BUCKET_NAME,
+            CreateBucketConfiguration={"LocationConstraint": "eu-central-1"},
+        )
+        yield s3

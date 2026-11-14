@@ -4,31 +4,21 @@ No business rules here: the adapter maps Run to an item and back, and runs one Q
 """
 
 from collections.abc import Mapping
-from datetime import UTC, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from boto3.dynamodb.conditions import Key
 
 from backend.domain import limits
+from backend.domain.events import format_utc, parse_utc
 from backend.domain.models import Position, Run
 
 if TYPE_CHECKING:
     from mypy_boto3_dynamodb.service_resource import Table
 
 DEFAULT_BOARD = "global"
-# Fixed width (microseconds always present) so that string order equals time order.
-TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 SCORE_DIGITS = len(str(limits.MAX_SCORE))
 WAVES_DIGITS = len(str(limits.MAX_WAVES))
-
-
-def format_time(moment: datetime) -> str:
-    return moment.astimezone(UTC).strftime(TIME_FORMAT)
-
-
-def parse_time(text: str) -> datetime:
-    return datetime.strptime(text, TIME_FORMAT).replace(tzinfo=UTC)
 
 
 def rank_key(run: Run) -> str:
@@ -37,7 +27,7 @@ def rank_key(run: Run) -> str:
     inverted_waves = limits.MAX_WAVES - run.waves_survived
     return (
         f"{inverted_score:0{SCORE_DIGITS}d}#{inverted_waves:0{WAVES_DIGITS}d}"
-        f"#{format_time(run.received_at)}#{run.run_id}"
+        f"#{format_utc(run.received_at)}#{run.run_id}"
     )
 
 
@@ -51,7 +41,7 @@ class DynamoDbRunRepository:
             "board": self._board,
             "rank_key": rank_key(run),
             "run_id": run.run_id,
-            "received_at": format_time(run.received_at),
+            "received_at": format_utc(run.received_at),
             "player_name": run.player_name,
             "arena": run.arena,
             "score": run.score,
@@ -78,7 +68,7 @@ def _to_run(item: Mapping[str, object]) -> Run:
     killer = item.get("killer_type")
     return Run(
         run_id=_text(item, "run_id"),
-        received_at=parse_time(_text(item, "received_at")),
+        received_at=parse_utc(_text(item, "received_at")),
         player_name=_text(item, "player_name"),
         arena=_text(item, "arena"),
         score=int(_number(item, "score")),
