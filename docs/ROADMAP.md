@@ -127,10 +127,10 @@ Plan a separate evening: the first engine build takes a long time and needs a lo
 - [x] Domain first: `Run`, `LeaderboardEntry`, validation rules, ports (`RunRepository`, `EventArchive`), with pytest, zero AWS imports
 - [x] DynamoDB adapter and S3 adapter tested with moto
 - [x] Lambda handlers are thin: parse, call domain, map errors to HTTP codes
-- [ ] CDK stack: HTTP API, two Lambda functions, one DynamoDB table (on-demand), one S3 bucket (blocked public access, encryption, lifecycle rule)
+- [x] CDK stack: HTTP API, two Lambda functions, one DynamoDB table (on-demand), one S3 bucket (blocked public access, encryption, lifecycle rule)
 - [x] IAM least privilege: each Lambda gets only the actions it uses on the one resource it needs; every permission explained in the PR
-- [ ] Throttling on the API stage; request body size limited
-- [ ] AWS Budget with an alert at 5 USD
+- [x] Throttling on the API stage; request body size limited
+- [x] AWS Budget with an alert at 5 USD
 - [ ] `cdk synth` in CI; security-auditor agent run before the first `cdk deploy`
 - [ ] import-linter contracts pass
 
