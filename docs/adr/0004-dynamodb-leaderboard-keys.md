@@ -29,7 +29,7 @@ Option A.
 - Top N is `Query(board = "global", ScanIndexForward = true, Limit = N)`.
 - The domain still sorts what the adapter returns (cheap for 10 items), so ranking stays a domain rule and the adapter cannot silently break it. A test checks that `rank_key` order equals `ranking_key` order.
 - Billing mode on-demand.
-- Point-in-time recovery: **off**. Every valid run is archived in S3 before it is saved to DynamoDB (docs/api.md), so the leaderboard can be rebuilt from S3. Turn PITR on if the table ever holds data that is not in S3.
+- Point-in-time recovery: **off**. Every valid run is archived in S3 before it is saved to DynamoDB (docs/api.md), so the leaderboard can be rebuilt from S3. Raw events expire after two years (ADR 0005), so the S3 copy covers the last two years; that trade-off is accepted there. Turn PITR on if older runs must survive a table loss.
 
 ## Consequences
 - Top 10 costs one `Query` that reads 10 items, whatever the table size.
