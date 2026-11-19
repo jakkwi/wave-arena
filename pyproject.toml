@@ -53,7 +53,7 @@ module = ["azlmbr", "azlmbr.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["backend/tests", "tools/tests", "tests"]
+testpaths = ["backend/tests", "tools/tests", "infra/tests", "tests"]
 pythonpath = ["."]
 addopts = "-q --import-mode=importlib"
 
