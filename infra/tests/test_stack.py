@@ -5,51 +5,16 @@ import re
 from pathlib import Path
 from typing import Any
 
-import aws_cdk as cdk
 import aws_cdk.cx_api as cxapi
 import pytest
 from aws_cdk.assertions import Match, Template
 
+from infra.tests.cdk_helpers import as_list, get_att, logical_id
 from infra.wave_arena_infra.stack import WaveArenaStack
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CDK_JSON = REPO_ROOT / "infra" / "cdk.json"
 HANDLERS = REPO_ROOT / "backend" / "lambdas"
 ENV_READ = re.compile(r"""os\.environ\[["']([A-Z_]+)["']\]""")
-
-
-@pytest.fixture(scope="module")
-def stack(tmp_path_factory: pytest.TempPathFactory) -> WaveArenaStack:
-    # Same feature flags as `cdk synth`, so policies are rendered the same way.
-    context = json.loads(CDK_JSON.read_text(encoding="utf-8"))["context"]
-    outdir = tmp_path_factory.mktemp("cdk.out")
-    app = cdk.App(context=context, outdir=str(outdir))
-    return WaveArenaStack(app, "TestStack")
-
-
-@pytest.fixture(scope="module")
-def assembly(stack: WaveArenaStack) -> cxapi.CloudAssembly:
-    """The app is synthesized once; template and asset tests read the same output."""
-    app = stack.node.root
-    assert isinstance(app, cdk.App)
-    return app.synth()
-
-
-@pytest.fixture(scope="module")
-def template(stack: WaveArenaStack, assembly: cxapi.CloudAssembly) -> Template:
-    return Template.from_json(assembly.get_stack_by_name(stack.stack_name).template)
-
-
-def logical_id(stack: WaveArenaStack, construct: Any) -> str:
-    return stack.resolve(construct.node.default_child.logical_id)  # type: ignore[no-any-return]
-
-
-def get_att(resource_id: str) -> dict[str, Any]:
-    return {"Fn::GetAtt": [resource_id, "Arn"]}
-
-
-def as_list(value: Any) -> list[Any]:
-    return value if isinstance(value, list) else [value]
 
 
 def role_statements(template: Template, role_id: str) -> list[dict[str, Any]]:

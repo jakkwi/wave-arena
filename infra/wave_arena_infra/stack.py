@@ -1,11 +1,12 @@
 """Wave Arena backend stack (M4).
 
-This stack: DynamoDB leaderboard table, S3 bucket for raw run events and the two Lambda
-functions with hand-written least-privilege policies. The HTTP API, stage throttling and the
-budget alert are added on top in issue #12, using the public attributes below.
+This stack: DynamoDB leaderboard table, S3 bucket for raw run events, the two Lambda
+functions with hand-written least-privilege policies, the public HTTP API in front of them
+(api.py) and the 5 USD monthly budget alert (budget.py).
 
-Decisions: docs/adr/0004-dynamodb-leaderboard-keys.md (keys, PITR) and
-docs/adr/0005-cdk-stack-data-and-iam.md (removal policies, lifecycle, IAM).
+Decisions: docs/adr/0004-dynamodb-leaderboard-keys.md (keys, PITR),
+docs/adr/0005-cdk-stack-data-and-iam.md (removal policies, lifecycle, IAM) and
+docs/adr/0006-http-api-throttling-budget.md (API, throttling, CORS, budget).
 """
 
 from pathlib import Path
@@ -18,6 +19,9 @@ from aws_cdk import aws_lambda as lambda_
 from aws_cdk import aws_logs as logs
 from aws_cdk import aws_s3 as s3
 from constructs import Construct
+
+from infra.wave_arena_infra.api import PublicApi
+from infra.wave_arena_infra.budget import budget_email_parameter, monthly_cost_budget
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -72,6 +76,18 @@ class WaveArenaStack(cdk.Stack):
         )
         self._grant_post_run()
         self._grant_get_leaderboard()
+
+        api = PublicApi(
+            self,
+            "PublicApi",
+            post_run=self.post_run_function,
+            get_leaderboard=self.get_leaderboard_function,
+        )
+        self.http_api = api.http_api
+        self.api_stage = api.stage
+        cdk.CfnOutput(self, "ApiUrl", value=self.api_stage.url)
+
+        self.budget = monthly_cost_budget(self, budget_email_parameter(self))
 
     def _leaderboard_table(self) -> dynamodb.Table:
         return dynamodb.Table(
